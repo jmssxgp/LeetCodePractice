@@ -88,7 +88,7 @@ class Solution{
     }
 
     /*
-    leetcode 62
+    leetcode  62
      */
     public int uniquePaths(int m, int n) {
         // 排列组合也可解，问题在于溢出和效率
