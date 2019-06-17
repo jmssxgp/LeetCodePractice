@@ -6,7 +6,9 @@ import java.util.List;
 public class medium {
     public static void main(String[] args) {
         Solution solution = new Solution();
-        System.out.println(solution.uniquePaths(10,10));
+        int[][] t = {{0,0,1}};
+        System.out.println(solution.uniquePathsWithObstacles(t));
+        //System.out.println(solution.uniquePaths(10,10));
     }
 }
 class Solution{
@@ -106,5 +108,45 @@ class Solution{
             }
         }
         return t[m-1][n-1];
+    }
+
+    /*
+    leetcode 63
+     */
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int r = obstacleGrid.length, c = obstacleGrid[0].length;
+        int[][] t = new int[r][c];
+        boolean f = false;
+        for (int i = 0; i < r; i++) {
+            if(obstacleGrid[i][0]==1)
+                f = true;
+            if(f)
+                t[i][0]=0;
+            else
+                t[i][0]=1;
+        }
+        f = false;
+        for (int i = 0; i < c; i++) {
+            if(obstacleGrid[0][i]==1)
+                f = true;
+            if(f)
+                t[0][i]=0;
+            else
+                t[0][i]=1;
+        }
+        for (int i = 1; i < r; i++) {
+            for (int j = 1; j < c; j++) {
+                if (obstacleGrid[i][j]==1)
+                    t[i][j] = 0;
+                else if(obstacleGrid[i-1][j]!=1&&obstacleGrid[i][j-1]!=1)
+                t[i][j] = t[i-1][j]+t[i][j-1];
+                else if(obstacleGrid[i-1][j]!=1){
+                    t[i][j] = t[i-1][j];
+                }else{
+                    t[i][j] =t[i][j-1];
+                }
+            }
+        }
+        return t[r-1][c-1];
     }
 }
