@@ -10,6 +10,7 @@ public class medium {
     }
 }
 class Solution{
+    List<List<Integer>> list = new ArrayList<>();
     Solution(){
 
     }
@@ -236,19 +237,84 @@ class Solution{
     leetcode 75
      */
     public void sortColors(int[] nums) {
-        int high = nums.length-1, low = 0;
-        while (low <= high) {
-            while (nums[low]==0)
-                low++;
-            while (nums[high]==2)
-                high--;
-            int t = nums[low];
-            nums[low] = nums[high];
-            nums[high] = t;
-            if (nums[low]==0)
-                low++;
-            if (nums[high]==2)
-                high--;
+
+    }
+
+    /*
+    leetcode 77
+     */
+    public List<List<Integer>> combine(int n, int k) {
+        aid(new ArrayList<>(),n, k, 0);
+        return list;
+    }
+
+    private void aid(List<Integer> l, int n, int k, int t) {
+        if(l.size()==k){
+            list.add(l);
+            return;
+        }
+        //i的临界值不难判断即，list中第i个位置的最大取值，比如n=4,k=2,第一个值最大取值为3；
+        for (int i = (l.size()==0?1:l.get(l.size()-1)+1); i <= n - k + 1 + t; i++) {
+            l.add(i);
+            aid(l, n, k, t+1);
+            l.remove(l.size()-1);
+            //若l.size()==k，返回后，将添加的最后一个值移除，避免重复添加到同一个
+            //list中，这种情况也可以通过每次new一个新的list解决，但是消耗内存较大
         }
     }
+
+    /*
+    leetcode 78
+     */
+    public List<List<Integer>> subsets(int[] nums) {
+        for (int i = 0; i <= nums.length; i++) {
+            aid(new ArrayList<>(), nums.length, i, nums, 0);
+        }
+        return list;
+    }
+    private void aid(List<Integer> l, int n, int k, int[] nums, int t){
+        if(l.size()==k){
+            list.add(l);
+            return;
+        }
+        for (int i = (l.size()==0?1:t); i <= n; i++) {
+            List<Integer> l1 = new ArrayList(l);
+            l1.add(nums[i-1]);
+            aid(l1, n, k, nums, i+1);
+            //通过每次new一个新的list解决，但是消耗内存较大
+        }
+    }
+
+    /*
+    leetcode 80
+     */
+    public int removeDuplicates(int[] nums) {
+        int len = nums.length, index = 0, count = 0;
+        for (int i = 0; i < len; i++) {
+            if(nums[i]==nums[index]){
+                count++;
+            }else if((nums[i]!=nums[index]||i==len-1)&&count<2){
+                index+=count;
+                nums[index] = nums[i];
+                count = 1;
+            }else if((nums[i]!=nums[index]||i==len-1)&&count>=2){
+                index += 2;
+                nums[index] = nums[i];
+                nums[index+1] = nums[i];
+                count = 1;
+            }
+        }
+        if(nums[len-1]!=nums[index-1]&&count>=2)
+        return  index+2;
+        else if(nums[len-1]!=nums[index-1]&&count<2)
+            return index+1;
+        else
+            return index;
+    }
 }
+
+
+
+
+
+
