@@ -168,4 +168,87 @@ class Solution{
         }
         return res[r-1][c-1];
     }
+
+    /*
+    leetcode 73
+     */
+    public void setZeroes(int[][] matrix) {
+        int r = matrix.length, c = matrix[0].length;
+        int[] r_0 = new int[r], c_0 = new int[c];
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if(matrix[i][j]==0){
+                    r_0[i]=1;
+                    c_0[j]=1;
+                }
+            }
+        }
+        for (int i = 0; i < r; i++) {
+            if(r_0[i]==1){
+                for (int j = 0; j < c; j++) {
+                    matrix[i][j]=0;
+                }
+            }
+        }
+        for (int i = 0; i < c; i++) {
+            if(c_0[i]==1){
+                for (int j = 0; j < r; j++) {
+                    matrix[j][i]=0;
+                }
+            }
+        }
+    }
+
+    /*
+    leetcode 74
+     */
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int r = matrix.length;
+        if (r==0)return false;
+        int c = matrix[0].length;
+        if (r==1)return search(matrix[0], target);
+        else{
+            for(int i = 0; i < r-1; i++){
+                if(matrix[i+1][0]>target){
+                    return search(matrix[i], target);
+                }
+            }
+        }
+        if(matrix[r-1][0]<target)
+            return search(matrix[r-1], target);
+        else return false;
+    }
+    public boolean search(int[] t, int target){
+        int high = t.length-1, low = 0;
+        while(low<=high){
+            int mid = (low + high) / 2;
+            if(t[mid]==target)return true;
+            else if(t[mid]<target){
+                low = mid+1;
+            }else{
+                high = mid-1;
+            }
+        }
+        return false;
+    }
+
+    /*
+    leetcode 75
+     */
+    public void sortColors(int[] nums) {
+        int high = nums.length-1, low = 0;
+        while (low <= high) {
+            while (nums[low]==0)
+                low++;
+            while (nums[high]==2)
+                high--;
+            int t = nums[low];
+            nums[low] = nums[high];
+            nums[high] = t;
+            if (nums[low]==0)
+                low++;
+            if (nums[high]==2)
+                high--;
+        }
+    }
 }
