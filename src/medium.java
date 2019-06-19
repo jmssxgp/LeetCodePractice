@@ -171,6 +171,25 @@ class Solution{
     }
 
     /*
+    leetcode 75
+     */
+    public void sortColors(int[] nums) {
+        int high = nums.length-1, low = 0;
+        for (int i = 0; i <= high; i++) {
+            if(nums[i]==0&&i!=low){
+                nums[i] = nums[low];
+                nums[low++] = 0;
+                i--;
+            }else if(nums[i]==2){
+                nums[i] = nums[high];
+                nums[high--] = 2;
+                i--;
+
+            }
+        }
+    }
+
+    /*
     leetcode 73
      */
     public void setZeroes(int[][] matrix) {
@@ -234,13 +253,6 @@ class Solution{
     }
 
     /*
-    leetcode 75
-     */
-    public void sortColors(int[] nums) {
-
-    }
-
-    /*
     leetcode 77
      */
     public List<List<Integer>> combine(int n, int k) {
@@ -289,27 +301,42 @@ class Solution{
     leetcode 80
      */
     public int removeDuplicates(int[] nums) {
-        int len = nums.length, index = 0, count = 0;
-        for (int i = 0; i < len; i++) {
-            if(nums[i]==nums[index]){
-                count++;
-            }else if((nums[i]!=nums[index]||i==len-1)&&count<2){
-                index+=count;
-                nums[index] = nums[i];
-                count = 1;
-            }else if((nums[i]!=nums[index]||i==len-1)&&count>=2){
-                index += 2;
-                nums[index] = nums[i];
-                nums[index+1] = nums[i];
-                count = 1;
+        int i = 0;
+        for (int n : nums) {
+            if (i<2||n>nums[i-2]){ //n与i-2比较，保证至多两个相同，即使中间有只有一个的也能保证n一定大于i-2
+                nums[i++] = n;
             }
         }
-        if(nums[len-1]!=nums[index-1]&&count>=2)
-        return  index+2;
-        else if(nums[len-1]!=nums[index-1]&&count<2)
-            return index+1;
-        else
-            return index;
+        return i;
+    }
+
+    /*
+    leetcode 79
+     */
+    public boolean exist(char[][] board, String word) {      //dfs
+        char[] w = word.toCharArray();
+        if (board.length==0)
+            return false;
+        boolean[][] visited = new boolean[board.length][board[0].length];
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j]==w[0])
+                    if(search(board,i,j,w,0,visited))
+                        return true;
+            }
+        }
+        return false;
+    }
+    private boolean search(char[][] board,int i, int j, char[]w, int index,boolean[][] visited){
+        if (index==w.length)return true;
+        //不用分太细，直接像下面这样，把不符合要求的点直接返回false
+        if(i<0||i>=board.length||j<0||j>=board[0].length||visited[i][j]||w[index]!=board[i][j])
+            return false;
+        visited[i][j]=true;
+        if (search(board,i+1,j,w,index+1,visited)||search(board,i,j+1,w,index+1,visited)||search(board,i-1,j,w,index+1,visited)||search(board,i,j-1,w,index+1,visited))
+            return true;
+        visited[i][j]=false; //回溯，若未成功，将所有的点恢复为未访问
+        return false;
     }
 }
 
