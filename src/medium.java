@@ -423,14 +423,21 @@ class Solution{
      */
     public List<Integer> grayCode(int n) {
         List<Integer> list = new ArrayList<>();
-        if(n==0){
-            list.add(0);
-            return list;
-        }
-        int num = 0;
+        list.add(0);
         for (int i = 0; i < n; i++) {
-
+            int add = 1<<i;
+            for (int j = list.size()-1; j >= 0; j--){
+                list.add(list.get(j)+add);
+            }
         }
+        return list; //考虑在已有的n-1的结果的最左边加0或1，加0值不变，因此必+1，再观察规律
+    }
+    public List<Integer> grayCode2(int n) { //格雷编码的公式，保留首位，其余与高一位做异或
+        List<Integer> gray = new ArrayList<Integer>();
+        for(int binary = 0;binary < 1 << n; binary++){
+            gray.add(binary ^ binary >> 1);
+        }
+        return gray;
     }
 }
 
