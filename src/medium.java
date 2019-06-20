@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class medium {
     public static void main(String[] args) {
@@ -337,6 +334,103 @@ class Solution{
             return true;
         visited[i][j]=false; //回溯，若未成功，将所有的点恢复为未访问
         return false;
+    }
+
+    /*
+    leetcode 82
+     */
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head==null||head.next==null)return head;
+        ListNode root = new ListNode(99999999);
+        root.next = head;
+        ListNode h = new ListNode(Integer.MIN_VALUE);
+        ListNode k = h;
+        ListNode p = root, q = root.next, r = q.next;
+        while(true){
+            if (r!=null&&p.val!=q.val&&q.val!=r.val){
+                k.next = new ListNode(q.val);
+                k = k.next;
+                p = q;
+                q = r;
+                r = r.next;
+            }else if(r==null&&p.val!=q.val){
+                k.next = new ListNode(q.val);
+                k = k.next;
+                break;
+            }else if(r==null){
+                break;
+            }else {
+                p = q;
+                q = r;
+                r = r.next;
+            }
+        }
+        return h.next;
+    }
+
+    public ListNode deleteDuplicates2(ListNode head) {
+        if (head==null||head.next==null)return head;
+        ListNode root = new ListNode(0);
+        root.next = head;
+        ListNode pre = root;
+        ListNode cur = head;
+        while (cur != null) {
+            while (cur.next != null && cur.val == cur.next.val) {
+                cur = cur.next;
+            }
+            if (pre.next == cur) { //if pre.next = cur; put cur in pre's next
+                pre = pre.next;
+            }else{
+                pre.next = cur.next; // else delete between pre and cur
+            }
+            cur = cur.next;
+        }
+        return root.next;
+    }
+
+    /*
+    leetcode 86
+     */
+    public ListNode partition(ListNode head, int x) {
+        ListNode root = new ListNode(-1);
+        ListNode res = new ListNode(-1); //摘下root中小于x的节点
+        root.next = head;
+        ListNode q = root, r = root.next; //遍历root
+        ListNode p1 = res; //工作指针
+        while(r!=null){
+            if (r.val < x) {
+                q.next = r.next; //摘下r
+                r.next = null;
+                //System.out.println(r.val);
+                p1.next = r;
+                p1 = p1.next;
+                r = q.next;
+            }else {
+                q = r;
+                r = r.next;
+            }
+        }
+//        while (root!=null){
+//            System.out.println(root.val);
+//            root = root.next;
+//        }
+        p1.next = root.next;
+        return res.next;
+    }
+
+    /*
+    leetcode 89
+     */
+    public List<Integer> grayCode(int n) {
+        List<Integer> list = new ArrayList<>();
+        if(n==0){
+            list.add(0);
+            return list;
+        }
+        int num = 0;
+        for (int i = 0; i < n; i++) {
+
+        }
     }
 }
 
