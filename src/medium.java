@@ -439,6 +439,82 @@ class Solution{
         }
         return gray;
     }
+
+    /**
+     * @leetcode 71
+     */
+    //栈操作，可用栈或者双向链表代替栈等
+    public String simplifyPath(String path) {
+        StringBuilder res = new StringBuilder();
+        LinkedList<String> stack = new LinkedList<>();
+        for (String i: path.split("/")
+        ) {
+            if (i.equals("..")){
+                if (!stack.isEmpty())
+                    stack.removeLast();
+            }else if(!i.equals("")&&!i.equals(".")){
+                stack.add(i);
+            }
+        }
+        if (stack.isEmpty()){
+            res.append("/");
+            return res.toString();
+        }else {
+            for (String i : stack) {
+                res.append("/" + i);
+            }
+            return res.toString();
+        }
+    }
+
+    /**
+     * @leetcode 91
+     */
+    public int numDecodings(String s) {
+        int[] c = new int[s.length()];
+        char[] t = s.toCharArray();
+        if(t.length==0)return 0;
+        if(t.length==1&&t[0]!='0')
+            return 1;
+        else if (t.length==1||t[0]=='0'){
+            return 0;
+        }
+        else if(t.length==2&&(t[0]-'0')*10+t[1]-'0'<=26&&t[1]!='0'){
+            return 2;
+        }else if(t.length==2&&(t[0]-'0')*10+t[1]-'0'<=26){
+            return 1;
+        }else{
+            if (t[t.length-1]=='0'){ //末位为0
+                c[t.length-1] = 0;
+                if ((t[t.length-2]-'0')*10+t[t.length-1]-'0'>26||t[t.length-2]=='0'){
+                    c[t.length-2]=0;
+                }else {
+                    c[t.length-2]=1;
+                }
+            }else {                  //末位不为0
+                c[t.length-1] = 1;
+                if (t[t.length-2]=='0')
+                    c[t.length-2]=0;
+                else if ((t[t.length-2]-'0')*10+t[t.length-1]-'0'>26){
+                    c[t.length-2]=1;
+                }else {
+                    c[t.length-2]=2;
+                }
+            }
+            for (int i = t.length-3; i >=0 ; i--) {
+                int k = (t[i]-'0')*10+t[i+1]-'0';
+                if(t[i]=='0')  //首字母为0，显然无对应解码
+                    c[i]=0;
+                else if(k<=26&&k!=0){
+                    c[i] = c[i+1]+c[i+2];
+                }else if((k)%10!=0){
+                    c[i] = c[i+1];
+                }else
+                    return 0;
+            }
+        }
+        return c[0];
+    }
 }
 
 
