@@ -515,6 +515,80 @@ class Solution{
         }
         return c[0];
     }
+
+    /**
+     * @leetcode 49
+     */
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, Integer> map = new HashMap<>();
+        List<List<String>> res = new LinkedList<>();
+        for (String s:strs
+             ) {
+            char[] t = s.toCharArray();
+            Arrays.sort(t);
+            String str = new String(t);
+            if(!map.containsKey(str)){
+                List<String> l = new LinkedList<>();
+                l.add(s);
+                res.add(l);
+                map.put(str, res.size()-1);
+            }else
+                res.get(map.get(str)).add(s);
+        }
+        return res;
+    }
+
+    /**
+     * @leetcode 31
+     */
+    public void nextPermutation(int[] nums) {
+        int len = nums.length;
+        if(len<2)return;
+        int index = -1, min = Integer.MAX_VALUE;
+        for (int i = len - 1; i > 0; i--) {
+            if (nums[i] > nums[i - 1]) {
+                for(int j = i; j<len;j++){
+                    if (nums[j]<min&&nums[j]>=nums[i-1]){
+                        index = j;
+                        min = nums[j];
+                    }
+                }
+                int t = nums[i-1];
+                nums[i-1] = nums[index];
+                nums[index] = t;
+                System.out.println(i+""+ len);
+                Arrays.sort(nums,i,len);
+                return;
+            }
+        }
+        Arrays.sort(nums);
+    }
+
+    /**
+     * @leetcode 47
+     */
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length-1; i++) {
+            if (nums[i]!=nums[i+1]||(i==nums.length-1&&nums[i]!=nums[i-1])){
+                List<Integer> l = new LinkedList<>();
+                l.add(nums[i]);
+                add(nums,i, l);
+            }
+        }
+        return list;
+    }
+    private void add(int[] nums, int j, List<Integer> l){
+        if(l.size()==nums.length)
+            return;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i]!=nums[i+1]||(i==nums.length-1&&nums[i]!=nums[i-1])&&i!=j){
+                List<Integer> l1 = new ArrayList<>(l);
+                l1.add(nums[i]);
+                add(nums,i,l1);
+            }
+        }
+    }
 }
 
 
