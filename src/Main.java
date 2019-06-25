@@ -4,11 +4,11 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         Solution solution = new Solution();
-        int[] t ={1,3,2};
-        solution.nextPermutation(t);
-        for (int i:t
-             ) {
-            System.out.println(i);
+        String s = "0109910";
+        List<String> l = solution.restoreIpAddresses(s);
+        for (String string:
+             l) {
+            System.out.println(string);
         }
     }
 }

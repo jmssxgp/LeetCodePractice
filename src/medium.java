@@ -565,29 +565,206 @@ class Solution{
     }
 
     /**
-     * @leetcode 47
+     * @leetcode 90
      */
-    public List<List<Integer>> permuteUnique(int[] nums) {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
         Arrays.sort(nums);
-        for (int i = 0; i < nums.length-1; i++) {
-            if (nums[i]!=nums[i+1]||(i==nums.length-1&&nums[i]!=nums[i-1])){
-                List<Integer> l = new LinkedList<>();
-                l.add(nums[i]);
-                add(nums,i, l);
-            }
+        for (int i = 0; i <= nums.length; i++) {
+            aidSubsetWithDup(new ArrayList<>(), nums, i, 0); //此处的0无意义
         }
         return list;
     }
-    private void add(int[] nums, int j, List<Integer> l){
-        if(l.size()==nums.length)
+    private void aidSubsetWithDup(List<Integer> l, int[] nums, int k, int t){ //k为子集中数字个数, t为添加的下一个数字下标开始
+        if(l.size()==k){
+            list.add(l);
             return;
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i]!=nums[i+1]||(i==nums.length-1&&nums[i]!=nums[i-1])&&i!=j){
+        }
+        for (int i = (l.size() == 0 ? 1 : t); i <= nums.length; i++) {
+            if((i<nums.length&&nums[i-1]<nums[i])||(i==nums.length)){
                 List<Integer> l1 = new ArrayList<>(l);
-                l1.add(nums[i]);
-                add(nums,i,l1);
+                l1.add(nums[i-1]);
+                aidSubsetWithDup(l1, nums, k, i + 1); //下一个添加从(i+1)-1开始，若存在重复数字，那么每个重复数字应该只用一次
+            }else{
+                l.add(nums[i-1]);
             }
         }
+    }
+
+    /**
+     * @leetcode 18
+     */
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> result=new ArrayList<>();
+        if(nums.length<4){
+            return result;
+        }
+        Arrays.sort(nums);
+        if(nums.length==4){
+            int sum=nums[0]+nums[1]+nums[2]+nums[3];
+            if(sum==target){
+                result.add(Arrays.asList(nums[0],nums[1],nums[2],nums[3]));
+                return result;
+            }
+        }
+        int n = nums.length;
+        for(int i=0;i<nums.length-3;i++){
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            if (nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target) break;
+            if (nums[i] + nums[n - 1] + nums[n - 2] + nums[n - 3] < target) continue;
+            for(int j=i+1;j<nums.length-2;j++){
+                if (j - i > 1 && nums[j] == nums[j - 1]) continue;
+                if (nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target) break;
+                if (nums[i] + nums[j] + nums[n - 1] + nums[n - 2] < target) continue;
+                int l=j+1;
+                int r=nums.length-1;
+                while(l<r){
+                    int sum=nums[i]+nums[j]+nums[l]+nums[r];
+                    if(sum>target){
+                        while(l<r&&nums[r]==nums[r-1]){
+                            r--;
+                        }
+                        r--;
+                    }else if(sum<target){
+                        while(l<r&&nums[l]==nums[l+1]){
+                            l++;
+                        }
+                        l++;
+                    }else{
+                        result.add(Arrays.asList(nums[i],nums[j],nums[l],nums[r]));
+                        while(l<r&&nums[r]==nums[r-1]){   //消除重复
+                            r--;
+                        }
+                        while(l<r&&nums[l]==nums[l+1]){
+                            l++;
+                        }
+                        r--;
+                        l++;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+    /**
+     * @leetcode 22
+     */
+    public List<String> generateParenthesis(int n) { //从当前使用了的左右括号的数量入手
+        List<String> l = new LinkedList<>();
+        char[] t = new char[n*2];
+        t[0]='(';
+        aidGenerateParenthesis(t,1,0,n,l);
+        return l;
+    }
+
+    private void aidGenerateParenthesis(char[] t, int l, int r, int n, List<String> list1) {
+        if(l==n){
+            for (int i = r+l; i < 2*n; i++) {
+                t[i]=')';
+            }
+            list1.add(new String(t));
+        }
+        else if(l==r){
+            t[l+r]='(';
+            aidGenerateParenthesis(t,l+1,r,n,list1);
+        } else if (l > r) {
+            t[l+r] ='(';
+            aidGenerateParenthesis(t,l+1,r,n,list1);
+            t[l+r] =')';
+            aidGenerateParenthesis(t,l,r+1,n,list1);
+        }
+    }
+
+    /**
+     * @leetcode 33
+     */
+    public int search2(int[] nums, int t) {
+        if(nums==null||nums.length==0)return -1;
+        int low = 0, high = nums.length-1;
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+            if (nums[mid] > nums[high]) {
+                low = mid+1;
+            }else {
+                high = mid;
+            }
+        }
+        if((low!=0&&t>nums[low-1])||(t<nums[low]))
+            return -1;
+        int l=0, h = low;
+        while(l<=h){
+            int mid = l + (h - l) / 2;
+            if (nums[mid] < t) {
+                l = mid+1;
+            }else if(nums[mid]>t){
+                h = mid-1;
+            }else {
+                return mid;
+            }
+        }
+        l = low;
+        h = nums.length-1;
+        while(l<=h){
+            int mid = l + (h - l) / 2;
+            if (nums[mid] < t) {
+                l = mid+1;
+            }else if(nums[mid]>t){
+                h = mid-1;
+            }else {
+                return mid;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * @leetcode 93
+     */
+    List<String> res = new LinkedList<>();
+    public List<String> restoreIpAddresses(String s) {
+        aidRestoreIpAddresses(s, 0, 0, new StringBuilder());
+        return res;
+    }
+
+    private void aidRestoreIpAddresses(String s, int index, int count, StringBuilder now) {
+        if (count==4 && index == s.length()){
+            res.add(now.toString());
+            return;
+        }else if (count==4){
+            return;
+        }
+        if ((s.length()-now.length())*1.0/(4-count)>3){
+            return;
+        }
+        for (int i = index+1; i <= index+3&&i<=s.length(); i++) {
+            int val = Integer.valueOf(s.substring(index, i));
+            if (val<=255&&val>=Math.pow(10,i-index-1)||(val>=0&&i==index+1)){
+                now.append(s.charAt(i-1));
+                StringBuilder cur = new StringBuilder(now);
+                if(count!=3)
+                cur.append(".");
+                aidRestoreIpAddresses(s, i, count+1, cur);
+            }
+        }
+    }
+
+    /**
+     * @leetcode 94
+     */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> l = new LinkedList<>();
+        if (root==null)
+            return l;
+        Stack<TreeNode> stack = new Stack<>();
+        while (root!=null||!stack.empty()) {
+            while (root!=null){
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.pop();
+            l.add(root.val);
+            root =root.right;
+        }
+        return l;
     }
 }
 
