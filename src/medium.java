@@ -766,6 +766,119 @@ class Solution{
         }
         return l;
     }
+
+    /**
+     * @leetcode 96
+     */
+    public int numTrees(int n) {
+        /*
+        n个节点时，选择第i个节点为根节点的种类设为f(i),则总数G(n) = f(n)+....+f(0)
+        又有第i节点作根节点，则左子树i-1个点，右子树n-i个点，则f(i) = G(i-1)*G(n-i)
+         */
+        if (n<=1)return 1;
+        int[] dp = new int[n+1];
+        dp[0] = 1;
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            int temp = 0;
+            for (int j = 0; j < i; j++) {
+                temp += dp[i-j-1] * dp[j];
+            }
+            dp[i] = temp;
+        }
+        return dp[n];
+    }
+
+    /**
+     * @leetcode 98
+     */
+    List<Integer> lint = new LinkedList<>();
+    public boolean isValidBST(TreeNode root) {
+        in(root);
+        int len = lint.size();
+        for (int i = 0; i < len-1; i++) {
+            if (lint.get(i)>=lint.get(i+1))
+                return false;
+        }
+        return true;
+    }
+
+    private void in(TreeNode treeNode) {
+        if (treeNode == null) {
+            return;
+        }
+        in(treeNode.left);
+        lint.add(treeNode.val);
+        in(treeNode.right);
+    }
+
+    /**
+     * @leetcode 102
+     */
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        if (root==null)return list;
+        level(root, 0);
+        return list;
+    }
+
+    private void level(TreeNode root, int level) {
+        if (list.size() <= level&&root!=null) {
+            List<Integer> l = new LinkedList<>();
+            l.add(root.val);
+            list.add(l);
+        } else if (root == null) {
+            return;
+        }else {
+            list.get(level).add(root.val);
+        }
+        level(root.left, level+1);
+        level(root.right, level+1);
+    }
+
+    /**
+     * @leetcode 103
+     */
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        if (root==null)return list;
+        level2(root, 0);
+        return list;
+    }
+    private void level2(TreeNode root, int level) {
+        if (list.size() <= level&&root!=null) {
+            List<Integer> l = new LinkedList<>();
+            l.add(root.val);
+            list.add(l);
+        } else if (root == null) {
+            return;
+        }else {
+            if (level%2==0)
+            list.get(level).add(root.val);
+            else {
+                list.get(level).add(0,root.val);
+            }
+        }
+        level2(root.left, level+1);
+        level2(root.right, level+1);
+    }
+
+    /**
+     * @leetcode 105
+     */
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        aidBuildTree(preorder, inorder, 0, inorder.length-1);
+    }
+
+    private TreeNode aidBuildTree(int[] preorder, int[] inorder,int left, int right) {
+        int t = preorder[left];
+        TreeNode root = new TreeNode(t);
+        for (int i = 0; i < inorder.length; i++) {
+            if (inorder[i]==t){
+                root.left = aidBuildTree(preorder,inorder,1, i+1);
+                root.right = aidBuildTree(preorder,inorder,i+2,preorder.length-1);
+            }
+        }
+        return root;
+    }
 }
 
 
