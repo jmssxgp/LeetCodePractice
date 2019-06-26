@@ -862,22 +862,33 @@ class Solution{
     }
 
     /**
-     * @leetcode 105
+     * @leetcode 113
      */
-    public TreeNode buildTree(int[] preorder, int[] inorder) {
-        aidBuildTree(preorder, inorder, 0, inorder.length-1);
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> list = new ArrayList<>();
+        if (root==null)return list;
+
+        aidPathSum(root,sum,new LinkedList<>(), list);
+        return list;
     }
 
-    private TreeNode aidBuildTree(int[] preorder, int[] inorder,int left, int right) {
-        int t = preorder[left];
-        TreeNode root = new TreeNode(t);
-        for (int i = 0; i < inorder.length; i++) {
-            if (inorder[i]==t){
-                root.left = aidBuildTree(preorder,inorder,1, i+1);
-                root.right = aidBuildTree(preorder,inorder,i+2,preorder.length-1);
-            }
+    private void aidPathSum(TreeNode root, int sum, List<Integer> l,List<List<Integer>> list) {
+        if(root==null)return;
+        l.add(root.val);
+        if (sum==root.val&&root.left==null&&root.right==null){
+            List<Integer> l1 = new ArrayList<>(l);
+            list.add(l1);
         }
-        return root;
+        if (root.left != null) {
+            aidPathSum(root.left, sum-root.val, l, list);
+            //l.remove(l.size()-1);
+        }
+        //l.remove(l.size()-1);
+        if (root.right != null) {
+            aidPathSum(root.right, sum-root.val, l, list);
+            //l.remove(l.size()-1);
+        }
+        l.remove(l.size()-1);
     }
 }
 
