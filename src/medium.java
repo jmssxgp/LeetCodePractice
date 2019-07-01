@@ -883,49 +883,50 @@ class Solution{
     public boolean parseBoolExpr(String expression) {
         Stack<Character> exp_stack = new Stack<>();
         Stack<Character> characters = new Stack<>();
-        expression = expression.replaceAll(",","");
+        expression = expression.replaceAll(",", "");
         char[] t = expression.toCharArray();
         for (char i : t) {
-            if (i=='!'||i=='&'||i=='|'){
+            if (i == '!' || i == '&' || i == '|') {
                 exp_stack.push(i);
-            }else if (i!=')'){
+            } else if (i != ')') {
                 characters.push(i);
-            }else {
-                boolean f = characters.pop()=='t';
+            } else {
+                boolean f = characters.pop() == 't';
                 char e = exp_stack.pop();
-                if (e=='!'){
+                if (e == '!') {
                     characters.pop();
-                    if (f){
+                    if (f) {
                         characters.push('f');
-                    }else {
+                    } else {
                         characters.push('t');
                     }
-                }else if (e=='&'){
+                } else if (e == '&') {
                     while (characters.peek() != '(') {
-                        boolean f1 = characters.pop()=='t';
-                        f = f&&f1;
+                        boolean f1 = characters.pop() == 't';
+                        f = f && f1;
                     }
                     characters.pop();
-                    if (f){
+                    if (f) {
                         characters.push('t');
-                    }else {
+                    } else {
                         characters.push('f');
                     }
-                }else {
+                } else {
                     while (characters.peek() != '(') {
-                        boolean f1 = characters.pop()=='t';
-                        f = f||f1;
+                        boolean f1 = characters.pop() == 't';
+                        f = f || f1;
                     }
                     characters.pop();
-                    if (f){
+                    if (f) {
                         characters.push('t');
-                    }else {
+                    } else {
                         characters.push('f');
                     }
                 }
             }
         }
-        return characters.pop()=='t';
+        return characters.pop() == 't';
+    }
     public List<List<Integer>> pathSum(TreeNode root, int sum) {
         List<List<Integer>> list = new ArrayList<>();
         if (root==null)return list;
@@ -934,45 +935,47 @@ class Solution{
         return list;
     }
 
-    private void aidPathSum(TreeNode root, int sum, List<Integer> l,List<List<Integer>> list) {
-        if(root==null)return;
-        l.add(root.val);
-        if (sum==root.val&&root.left==null&&root.right==null){
-            List<Integer> l1 = new ArrayList<>(l);
-            list.add(l1);
-        }
-        if (root.left != null) {
-            aidPathSum(root.left, sum-root.val, l, list);
+    private void aidPathSum(TreeNode root, int sum, List<Integer> l,List<List<Integer>> list){
+            if (root == null) return;
+            l.add(root.val);
+            if (sum == root.val && root.left == null && root.right == null) {
+                List<Integer> l1 = new ArrayList<>(l);
+                list.add(l1);
+            }
+            if (root.left != null) {
+                aidPathSum(root.left, sum - root.val, l, list);
+                //l.remove(l.size()-1);
+            }
             //l.remove(l.size()-1);
+            if (root.right != null) {
+                aidPathSum(root.right, sum-root.val, l, list);
+                //l.remove(l.size()-1);
+            }
+            l.remove(l.size()-1);
+        }
     /*
     动态规划，dp[i]记录放i本书的最小高度，放置第i+1本时(下标问题，第i+1本高度宽度下标为i)，进入次循环，从
     第i+1本向前追溯，将他们尽可能放在一层，也就是说如果目前放置第六本，那就试试第六本第五本第四本。。等能不能放在一起，
     直到宽度够了，比如到第四本，那么现在在一层的三本最高高度就是h，而之前三本的所有高度，就在dp[3]中存储。
     那么dp[6] = Math.min(dp[6], dp[3]+h);  min是必需的，以为在j向前遍历时，每次会遍历到宽度大于书架宽度，所以dp可能更新
      */
-    public int minHeightShelves(int[][] books, int shelf_width) {
+    public int minHeightShelves(int[][] books, int shelf_width){
         int len = books.length;
-        int[] dp = new int[len+1];
-        for (int i = 0; i <=len ; i++) {
-            dp[i]=Integer.MAX_VALUE;
+        int[] dp = new int[len + 1];
+        for (int i = 0; i <= len; i++) {
+            dp[i] = Integer.MAX_VALUE;
         }
-        dp[0]=0;
+        dp[0] = 0;
         for (int i = 0; i < len; i++) {
-            int w =0, h =0;
+            int w = 0, h = 0;
             for (int j = i; j >= 0; j--) {
-                w+=books[j][0];
-                h =Math.max(h,books[j][1]);
-                if (w>shelf_width)
+                w += books[j][0];
+                h = Math.max(h, books[j][1]);
+                if (w > shelf_width)
                     break;
-                dp[i+1] = Math.min(dp[i+1], dp[j]+h);
+                dp[i + 1] = Math.min(dp[i + 1], dp[j] + h);
             }
         }
-        //l.remove(l.size()-1);
-        if (root.right != null) {
-            aidPathSum(root.right, sum-root.val, l, list);
-            //l.remove(l.size()-1);
-        }
-        l.remove(l.size()-1);
         return dp[len];
     }
 
