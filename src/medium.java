@@ -864,20 +864,145 @@ class Solution{
     /**
      * @leetcode 105
      */
-    public TreeNode buildTree(int[] preorder, int[] inorder) {
-        aidBuildTree(preorder, inorder, 0, inorder.length-1);
-    }
+//    public TreeNode buildTree(int[] preorder, int[] inorder) {
+//        aidBuildTree(preorder, inorder, 0, inorder.length-1);
+//    }
+//
+//    private TreeNode aidBuildTree(int[] preorder, int[] inorder,int left, int right) {
+//        int t = preorder[left];
+//        TreeNode root = new TreeNode(t);
+//        for (int i = 0; i < inorder.length; i++) {
+//            if (inorder[i]==t){
+//                root.left = aidBuildTree(preorder,inorder,1, i+1);
+//                root.right = aidBuildTree(preorder,inorder,i+2,preorder.length-1);
+//            }
+//        }
+//        return root;
+//    }
 
-    private TreeNode aidBuildTree(int[] preorder, int[] inorder,int left, int right) {
-        int t = preorder[left];
-        TreeNode root = new TreeNode(t);
-        for (int i = 0; i < inorder.length; i++) {
-            if (inorder[i]==t){
-                root.left = aidBuildTree(preorder,inorder,1, i+1);
-                root.right = aidBuildTree(preorder,inorder,i+2,preorder.length-1);
+    public boolean parseBoolExpr(String expression) {
+        Stack<Character> exp_stack = new Stack<>();
+        Stack<Character> characters = new Stack<>();
+        expression = expression.replaceAll(",","");
+        char[] t = expression.toCharArray();
+        for (char i : t) {
+            if (i=='!'||i=='&'||i=='|'){
+                exp_stack.push(i);
+            }else if (i!=')'){
+                characters.push(i);
+            }else {
+                boolean f = characters.pop()=='t';
+                char e = exp_stack.pop();
+                if (e=='!'){
+                    characters.pop();
+                    if (f){
+                        characters.push('f');
+                    }else {
+                        characters.push('t');
+                    }
+                }else if (e=='&'){
+                    while (characters.peek() != '(') {
+                        boolean f1 = characters.pop()=='t';
+                        f = f&&f1;
+                    }
+                    characters.pop();
+                    if (f){
+                        characters.push('t');
+                    }else {
+                        characters.push('f');
+                    }
+                }else {
+                    while (characters.peek() != '(') {
+                        boolean f1 = characters.pop()=='t';
+                        f = f||f1;
+                    }
+                    characters.pop();
+                    if (f){
+                        characters.push('t');
+                    }else {
+                        characters.push('f');
+                    }
+                }
             }
         }
+        return characters.pop()=='t';
+    }
+
+    /*
+    动态规划，dp[i]记录放i本书的最小高度，放置第i+1本时(下标问题，第i+1本高度宽度下标为i)，进入次循环，从
+    第i+1本向前追溯，将他们尽可能放在一层，也就是说如果目前放置第六本，那就试试第六本第五本第四本。。等能不能放在一起，
+    直到宽度够了，比如到第四本，那么现在在一层的三本最高高度就是h，而之前三本的所有高度，就在dp[3]中存储。
+    那么dp[6] = Math.min(dp[6], dp[3]+h);  min是必需的，以为在j向前遍历时，每次会遍历到宽度大于书架宽度，所以dp可能更新
+     */
+    public int minHeightShelves(int[][] books, int shelf_width) {
+        int len = books.length;
+        int[] dp = new int[len+1];
+        for (int i = 0; i <=len ; i++) {
+            dp[i]=Integer.MAX_VALUE;
+        }
+        dp[0]=0;
+        for (int i = 0; i < len; i++) {
+            int w =0, h =0;
+            for (int j = i; j >= 0; j--) {
+                w+=books[j][0];
+                h =Math.max(h,books[j][1]);
+                if (w>shelf_width)
+                    break;
+                dp[i+1] = Math.min(dp[i+1], dp[j]+h);
+            }
+        }
+        return dp[len];
+    }
+
+    /**
+     * @leetcode 116
+     */
+    public Node connect(Node root) {
+        aidConnect(null,root,-1);
         return root;
+    }
+
+    private void aidConnect(Node parent, Node root, int flag) {
+        if (parent!=null&&root!=null) {
+            if (flag == 1) {
+                root.next = parent.right;
+            } else if (flag == 2 && parent.next != null) {
+                root.next = parent.next.left;
+            }
+        }else if (root==null){
+            return;
+        }
+        aidConnect(root, root.left,1);
+        aidConnect(root,root.right, 2);
+    }
+
+    /**
+     * leetcode contest double 3 D
+     * @param A
+     * @return maxgrade
+     */
+    public int maximumMinimumPath(int[][] A) {
+        int[][] direct = {{1,0},{0,1},{-1,0},{0,-1}};
+        int r = A.length, c = A[0].length;
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.offer(new int[]{0,0,A[0][0]});
+        int[][] dp = new int[r][c];
+        dp[0][0] = A[0][0];
+        while (!queue.isEmpty()){
+            int[] k = queue.poll();
+            for (int[] d : direct) {
+                int nx = d[0]+k[0];
+                int ny = d[1]+k[1];
+                if (nx >= 0 && nx < r && ny >= 0 && ny < c) {
+                    int min = Math.min(k[2], A[nx][ny]);
+                    if (min>dp[nx][ny]){
+                        dp[nx][ny]=min;
+                        queue.offer(new int[]{nx,ny,min});
+                    }
+                }
+            }
+        }
+        return dp[r-1][c-1];
     }
 }
 

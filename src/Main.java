@@ -4,6 +4,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         Solution solution = new Solution();
-        System.out.println(solution.numTrees(10));
+        int[] nums = {2,3,-2,4};
+        System.out.println(solution.maxProduct(nums));
     }
 }
