@@ -862,7 +862,7 @@ class Solution{
     }
 
     /**
-     * @leetcode 105
+     * @leetcode 113
      */
 //    public TreeNode buildTree(int[] preorder, int[] inorder) {
 //        aidBuildTree(preorder, inorder, 0, inorder.length-1);
@@ -926,8 +926,24 @@ class Solution{
             }
         }
         return characters.pop()=='t';
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> list = new ArrayList<>();
+        if (root==null)return list;
+
+        aidPathSum(root,sum,new LinkedList<>(), list);
+        return list;
     }
 
+    private void aidPathSum(TreeNode root, int sum, List<Integer> l,List<List<Integer>> list) {
+        if(root==null)return;
+        l.add(root.val);
+        if (sum==root.val&&root.left==null&&root.right==null){
+            List<Integer> l1 = new ArrayList<>(l);
+            list.add(l1);
+        }
+        if (root.left != null) {
+            aidPathSum(root.left, sum-root.val, l, list);
+            //l.remove(l.size()-1);
     /*
     动态规划，dp[i]记录放i本书的最小高度，放置第i+1本时(下标问题，第i+1本高度宽度下标为i)，进入次循环，从
     第i+1本向前追溯，将他们尽可能放在一层，也就是说如果目前放置第六本，那就试试第六本第五本第四本。。等能不能放在一起，
@@ -951,6 +967,12 @@ class Solution{
                 dp[i+1] = Math.min(dp[i+1], dp[j]+h);
             }
         }
+        //l.remove(l.size()-1);
+        if (root.right != null) {
+            aidPathSum(root.right, sum-root.val, l, list);
+            //l.remove(l.size()-1);
+        }
+        l.remove(l.size()-1);
         return dp[len];
     }
 
