@@ -980,13 +980,38 @@ class Solution{
     }
 
     /**
-     * @leetcode 116
+     * @leetcode 116 117
      */
     public Node connect(Node root) {
         aidConnect(null,root,-1);
         return root;
     }
 
+    private void aidConnect2(Node parent, Node root, int flag) {
+        if (parent != null && root != null) {
+            if (flag==1){
+                if (parent.right!=null)
+                    root.next=parent.right;
+                else if (parent.next!=null){
+                    if (parent.next.left != null) {
+                        root.next=parent.next.left;
+                    }else if (parent.next.right!=null){
+                        root.next=parent.next.right;
+                    }
+                }
+            } else if (flag == 2 && parent.next != null) {
+                if (parent.next.left != null) {
+                    root.next=parent.next.left;
+                }else if (parent.next.right!=null){
+                    root.next=parent.next.right;
+                }
+            }
+        }
+        if (root!=null){
+            aidConnect2(root, root.left,1);
+            aidConnect2(root,root.right, 2);
+        }
+    }
     private void aidConnect(Node parent, Node root, int flag) {
         if (parent!=null&&root!=null) {
             if (flag == 1) {
@@ -1028,6 +1053,29 @@ class Solution{
             }
         }
         return dp[r-1][c-1];
+    }
+
+    /**
+     * @leetcode 137
+     */
+//    public int singleNumber(int[] nums) {
+//        Arrays.sort(nums);
+//        for (int i = 0; i < nums.length-2; i+=3) {
+//            if (nums[i]!=nums[i+2])
+//                return nums[i];
+//        }
+//        return nums[nums.length-1];
+//    }
+    public int singleNumber(int[] nums) {
+        int one = 0, two = 0, three = 0;
+        for (int i : nums) {
+            two =two| one & i;   //two记录出现两次的，即i与one同时为1,与two或操作保留目前为2次的位
+            one = one ^ i;   //one记录出现一次，与i不同时为1，因为同时为1的出现两次，已经记录在two中
+            three = one & two;  //three 即 one 和two同时为1
+            one = one&~three;   //three 为1的位要在one和three中清除
+            two = two&~three;   //同上
+        }
+        return one;
     }
 }
 
