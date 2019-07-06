@@ -1077,6 +1077,207 @@ class Solution{
         }
         return one;
     }
+
+    /**
+     * @leetcode 114
+     */
+    public void flatten(TreeNode root) {
+        aidFlatten(root);
+    }
+
+    private TreeNode aidFlatten(TreeNode root) {
+        if (root==null)
+            return null;
+        TreeNode right = root.right;
+        TreeNode f1 = aidFlatten(root.left);
+        root.left = null;
+        root.right = f1;
+        while (f1 != null && f1.right != null) {
+            f1 = f1.right;
+        }
+        if (f1!=null){
+            f1.right = aidFlatten(right);
+        }else {
+            root.right = aidFlatten(right);
+        }
+        return root;
+    }
+
+    /**
+     * @leetcode 92
+     */
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if(m==n)return head;
+        int count = 0;
+        ListNode root = new ListNode(-1);
+        root.next = head;
+        ListNode p = root, q = head;  //翻转
+        ListNode h = root, r = root; //保存头尾
+        while (q != null && count < m) {
+            h = p;
+            p = q;
+            q = q.next;
+            count++;
+        }
+        r = p;
+        h.next = null;
+        while (count <= n) {
+            p.next = h.next;
+            h.next = p;
+            p = q;
+            if(q!=null)
+            q = q.next;
+            count++;
+        }
+        r.next = p;
+        return root.next;
+    }
+
+    /**
+     * leetcode contest 3 double
+     */
+    public int twoSumLessThanK(int[] A, int K) {
+        Arrays.sort(A);
+        int max = 0;
+        if(A.length<=1||A[0]+A[1]>=K)return -1;
+        else {
+            int low =0, high = A.length-1;
+            while(low<high){
+                if (A[low]+A[high]>=K)
+                    high--;
+                else {
+                    if(A[low]+A[high]>max)
+                        max=A[low]+A[high];
+                    low++;
+                }
+            }
+            return max;
+        }
+    }
+
+    public int numKLenSubstrNoRepeats(String S, int K) {
+        if (S==null||S.length()<K)
+            return 0;
+        int len = S.length();
+        int count = 0;
+        for (int i = 0; i <= len - K; i++) {
+            if (aidNumKLenSubstrNoRepeats(S.substring(i,i+K)))
+                count++;
+        }
+        return count;
+    }
+    private boolean aidNumKLenSubstrNoRepeats(String s){
+        int[] t = new int[26];
+        char[] c = s.toCharArray();
+        for (char i : c) {
+            if(t[i-'a']==0)
+                t[i-'a']++;
+            else
+                return false;
+        }
+        return true;
+    }
+
+    public int earliestAcq(int[][] logs, int N) {
+        Arrays.sort(logs,Comparator.comparingInt(a->(a[0])));
+        int[] t = new int[N];
+        for (int i = 0; i < N; i++) {
+            t[i]=-1;
+        }
+        for (int[] i : logs) {
+            boolean flag = true;
+            if (i[1]<i[2]&&t[i[1]]==-1&&t[i[2]]==-1){
+                t[i[1]] =i[2];
+                t[i[2]] =i[2];
+            }else if(i[1]>i[2]&&t[i[1]]==-1&&t[i[2]]==-1) {
+                t[i[1]] = i[1];
+                t[i[2]] = i[1];
+            }else if (t[i[1]]==-1&&t[i[2]]!=-1){ //有一个有所属阵营
+                if (i[1]<t[i[2]])
+                t[i[1]] = t[i[2]];
+                else {
+                    t[i[1]] = i[1];
+                    int s = t[i[2]];
+                    for (int j = 0; j < N; j++) {
+                        if (t[j]==s){
+                            t[j] = i[1];
+                        }
+                    }
+                }
+            }else if(t[i[1]]!=-1&&t[i[2]]==-1) {
+                if (i[2]<t[i[1]])
+                    t[i[2]] = t[i[1]];
+                else {
+                    t[i[2]] = i[2];
+                    int s = t[i[1]];
+                    for (int j = 0; j < N; j++) {
+                        if (t[j]==s){
+                            t[j] = i[2];
+                        }
+                    }
+                }
+            }else {
+                int max = Math.max(t[i[1]],t[i[2]]);
+                int s = t[i[1]], z = t[i[2]];
+                for (int j = 0; j < N; j++) {
+                    if (t[j]==s||t[j]==z){
+                        t[j] = max;
+                    }
+                }
+            }
+            for (int j = 0; j < N; j++) {
+                System.out.println(t[j]);
+                if(t[j]!=N-1)
+                    flag = false;
+            }
+            if (flag)
+                return i[0];
+        }
+        return -1;
+    }
+
+    /**
+     * @leetcode contest 143
+     */
+    public int[] distributeCandies(int candies, int num_people) {
+        int[] t = new int[num_people];
+        int count = 1;
+        for (int i = 0; i < num_people; i++) {
+            if (candies>=count){
+                t[i]+=count;
+                candies-=count;
+                count++;
+            }else {
+                t[i]+=candies;
+                break;
+            }
+            if (i==num_people-1){
+                i=-1;
+            }
+        }
+        return t;
+    }
+
+    public List<Integer> pathInZigZagTree(int label) {
+        List<Integer> res = new ArrayList<>();
+        int level = 0;
+        for(;;level++){
+            if (Math.pow(2,level)>=label){
+                break;
+            }
+        }
+        if (Math.pow(2,level)>label)
+            level--;
+        System.out.println(level);
+        while (label!=1){
+            res.add(0,label);
+            label = (int)Math.pow(2,level)-(label-(int)Math.pow(2,level))/2-1;
+            level--;
+        }
+        res.add(0,1);
+        return res;
+    }
+
 }
 
 
