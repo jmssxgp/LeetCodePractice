@@ -983,33 +983,26 @@ class Solution{
      * @leetcode 116 117
      */
     public Node connect(Node root) {
-        aidConnect(null,root,-1);
+        List<List<Node>> l = new ArrayList<>();
+        aidConnect2(root,0,l);
         return root;
     }
 
-    private void aidConnect2(Node parent, Node root, int flag) {
-        if (parent != null && root != null) {
-            if (flag==1){
-                if (parent.right!=null)
-                    root.next=parent.right;
-                else if (parent.next!=null){
-                    if (parent.next.left != null) {
-                        root.next=parent.next.left;
-                    }else if (parent.next.right!=null){
-                        root.next=parent.next.right;
-                    }
-                }
-            } else if (flag == 2 && parent.next != null) {
-                if (parent.next.left != null) {
-                    root.next=parent.next.left;
-                }else if (parent.next.right!=null){
-                    root.next=parent.next.right;
-                }
-            }
+    private void aidConnect2(Node root, int level, List<List<Node>> l) {
+        if (l.size()-1<level){
+            l.add(new ArrayList<>());
         }
-        if (root!=null){
-            aidConnect2(root, root.left,1);
-            aidConnect2(root,root.right, 2);
+        List<Node> l1 = l.get(level);
+        if (root != null) {
+            if (l1.size()==0){
+                l1.add(root);
+            }else{
+                Node t = l1.get(l1.size()-1);
+                t.next = root;
+                l1.add(root);
+            }
+            aidConnect2(root.left,level+1,l);
+            aidConnect2(root.right,level+1,l);
         }
     }
     private void aidConnect(Node parent, Node root, int flag) {
@@ -1076,6 +1069,213 @@ class Solution{
             two = two&~three;   //同上
         }
         return one;
+    }
+
+    /**
+     * @leetcode 120
+     */
+    /*
+    自底向上更新
+     */
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int len = triangle.size();
+        int[] res = new int[len+1];
+        if (len==0)return 0;
+        for (int i = len - 1; i >= 0; i--) {
+            List<Integer> l = triangle.get(i);
+            for (int j = 0; j < l.size(); j++) {
+                res[j] = l.get(j) + Math.min(res[j],res[j+1]);
+            }
+        }
+        return res[0];
+    }
+
+    /**
+     * @leetcode 129
+     */
+    int sum = 0;
+    public int sumNumbers(TreeNode root) {
+        aidSumNumbers(root,0);
+        return sum;
+    }
+
+    private void aidSumNumbers(TreeNode root, int now) {
+        if (root==null)
+            return;
+        if (root.left == null && root.right == null) {
+            sum += now*10 + root.val;
+            return;
+        }
+        if (root.left != null) {
+            aidSumNumbers(root.left,now * 10 + root.val);
+        }
+        if (root.right != null) {
+            aidSumNumbers(root.right,now * 10 + root.val);
+        }
+    }
+
+    /**
+     * @leetcode 144
+     */
+    public List<Integer> preorderTraversal(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        List<Integer> l = new ArrayList<>();
+        if (root==null) return l;
+        stack.push(root);
+        while (!stack.empty()) {
+            TreeNode t = stack.pop();
+            l.add(t.val);
+            if (t.right!=null)
+                stack.push(t.right);
+            if (t.left!=null)
+                stack.push(t.left);
+        }
+        return l;
+    }
+
+    /**
+     * @leetcode 143
+     */
+    public void reorderList(ListNode head) {
+        ListNode fast = head, slow = head;
+        while (fast!=null&&fast.next!=null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        ListNode t = slow.next, p = t.next;
+        slow.next=null;
+        ListNode q = head.next;
+        head.next=null;
+        while (t!=null){
+            t.next=head.next;
+            head.next=t;
+            t = p;
+            if (p!=null)
+            p =p.next;
+        }
+    }
+
+    /**
+     * @leetcode 147
+     */
+    public ListNode insertionSortList(ListNode head) {
+        ListNode root = new ListNode(Integer.MIN_VALUE);
+        if(head==null)return head;
+        ListNode q = head.next;
+        while(head!=null){
+            head.next=null;
+            ListNode p = root;
+            if (p.next==null){
+                p.next = head;
+            }else {
+                while (p.next != null && p.next.val < head.val) {
+                    p = p.next;
+                }
+                head.next=p.next;
+                p.next=head;
+            }
+            head = q;
+            if(q!=null)
+            q = q.next;
+        }
+        return root.next;
+    }
+
+    /**
+     * @leetcode 150
+     */
+    public int evalRPN(String[] tokens) {
+        int[] nums = new int[tokens.length];
+        int top = -1;
+        for (String s : tokens) {
+            if (s.equals("+")||s.equals("-")||s.equals("*")||s.equals("/")){
+                int num1 = nums[top--];
+                int num2 = nums[top--];
+                int res = 0;
+                switch (s.toCharArray()[0]){
+                    case '+': res = num1+num2;break;
+                    case '-': res = num2-num1;break;
+                    case '/': res = num2/num1;break;
+                    case '*': res = num2*num1;break;
+                }
+                nums[++top]=res;
+            }else {
+                nums[++top] = Integer.parseInt(s);
+            }
+        }
+        return nums[0];
+    }
+
+    /**
+     * @leetcode 151
+     */
+    public String reverseWords(String s) {
+        String[] strs = s.trim().split("\\s+");
+        StringBuilder res = new StringBuilder();
+        for (int i = strs.length-1; i >=0 ; i--) {
+            res.append(strs[i]);
+            if (i != 0) {
+                res.append(" ");
+            }
+        }
+        return res.toString();
+    }
+
+    /**
+     * @leetcode 152
+     */
+    public int maxProduct(int[] nums) {
+        int[] dp = new int[nums.length];
+        dp[0] = nums[0];
+        int max = Integer.MIN_VALUE;
+        for (int i = 1; i < nums.length; i++) {
+            int t = nums[i];
+            if (t>0){
+                if (dp[i-1]>0){
+                    dp[i]=dp[i-1]*t;
+                }else{
+                    dp[i]=t;
+                }
+            }else {
+                if (t==0){
+                    dp[i]=0;
+                }else {
+                    for (int j=i-1;j>=0;j--){
+                        t*=nums[j];
+                        if (t>dp[i]){
+                            dp[i]=t;
+                        }
+                    }
+                }
+            }
+            if (dp[i]>max){
+                max=dp[i];
+            }
+        }
+        return max>dp[0]?max:dp[0];
+    }
+    /*
+    标签：动态规划
+    遍历数组时计算当前最大值，不断更新
+    令imax为当前最大值，则当前最大值为 imax = max(imax * nums[i], nums[i])
+    由于存在负数，那么会导致最大的变最小的，最小的变最大的。因此还需要维护当前最小值imin，imin = min(imin * nums[i], nums[i])
+    当负数出现时则imax与imin进行交换再进行下一步计算
+    时间复杂度：O(n)
+     */
+    public int maxProduct2(int[] nums) {
+        int max = Integer.MIN_VALUE, imax = 1, imin = 1;
+        for (int i : nums) {
+            if (i < 0) {
+                int temp = imax;
+                imax = imin;
+                imin = temp;
+            }
+            imax = Math.max(imax*i, i);
+            imin = Math.min(i*imin, i);
+
+            max = Math.max(max,imax);
+        }
+        return max;
     }
 }
 
