@@ -564,31 +564,6 @@ class Solution{
         Arrays.sort(nums);
     }
 
-    /**
-     * @leetcode 90
-     */
-    public List<List<Integer>> subsetsWithDup(int[] nums) {
-        Arrays.sort(nums);
-        for (int i = 0; i <= nums.length; i++) {
-            aidSubsetWithDup(new ArrayList<>(), nums, i, 0); //此处的0无意义
-        }
-        return list;
-    }
-    private void aidSubsetWithDup(List<Integer> l, int[] nums, int k, int t){ //k为子集中数字个数, t为添加的下一个数字下标开始
-        if(l.size()==k){
-            list.add(l);
-            return;
-        }
-        for (int i = (l.size() == 0 ? 1 : t); i <= nums.length; i++) {
-            if((i<nums.length&&nums[i-1]<nums[i])||(i==nums.length)){
-                List<Integer> l1 = new ArrayList<>(l);
-                l1.add(nums[i-1]);
-                aidSubsetWithDup(l1, nums, k, i + 1); //下一个添加从(i+1)-1开始，若存在重复数字，那么每个重复数字应该只用一次
-            }else{
-                l.add(nums[i-1]);
-            }
-        }
-    }
 
     /**
      * @leetcode 18
@@ -1478,6 +1453,204 @@ class Solution{
         return res;
     }
 
+
+    /**
+     * 179 主要是实现新的排序方法，其核心比较规则在于，将两个数进行前后连接，比较连接后的数的大小，来确定哪一个数应该在前边。
+     */
+    private class LargerNumberComparator implements Comparator<String>{
+        @Override
+        public int compare(String o1, String o2) {
+            String order1 = o1+o2;
+            String order2 = o2+o1;
+            return order2.compareTo(order1);
+        }
+    }
+    public String largestNumber(int[] nums) {
+        String[] s = new String[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            s[i] = String.valueOf(nums[i]);
+        }
+        Arrays.sort(s, new LargerNumberComparator());
+        StringBuilder res = new StringBuilder();
+        for (String i : s) {
+            //System.out.println(i);
+            res.append(i);
+        }
+        return res.toString();
+    }
+
+    /**
+     * 47 含有重复数字的全排列，使用flag数组来标记已经使用过的数字，如果当前数字与前一个数字相同，并且在本次排列中
+     * 前一个数字还未被使用，那么使用当前数字进行排列的话，会与之前的排列重复，因此进行剪枝，跳过。
+     */
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        Arrays.sort(nums);
+        boolean[] flag = new boolean[nums.length];
+        dfs(new ArrayList<>(), flag, nums);
+        return list;
+    }
+    private void dfs(List<Integer> l,boolean[] flag, int[] nums){
+        if (l.size()==nums.length){
+            list.add(new ArrayList(l));//传递引用，重新new一个对象保存
+            return;
+        }
+
+        for (int i = 0; i < nums.length; i++) {
+            if (flag[i]){
+                continue;
+            }
+
+            if (i>0&&nums[i-1]==nums[i]&&!flag[i-1]){
+                continue;
+            }
+
+            l.add(nums[i]);
+            flag[i]=true;
+            dfs(l,flag,nums);
+            flag[i]=false;
+            l.remove(l.size()-1);
+        }
+    }
+
+    /**
+     * 40,由上一题进行修改，组合的和为target，存在问题是会多出一些相同答案的重排列，增加一个参数j，规定只能向后查找
+     * 而不是从0查找，取消掉相同数字的重复排列
+     */
+
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        boolean[] flag = new boolean[candidates.length];
+        dfs2(new ArrayList<>(), candidates, target, 0, flag, 0);
+        return list;
+    }
+
+    private void dfs2(List<Integer> l, int[] candidates, int target, int sum, boolean[] flag, int j) {
+        if (sum == target) {
+            list.add(new ArrayList<>(l));
+            return;
+        }
+
+        for (int i = j; i < candidates.length; i++) {
+            if (flag[i])
+                continue;
+
+            if (i>0&&candidates[i-1]==candidates[i]&&!flag[i-1]){
+                continue;
+            }
+            if(sum+candidates[i]>target){
+                return;
+            }
+            flag[i] = true;
+            l.add(candidates[i]);
+            dfs2(l,candidates,target,sum+candidates[i],flag,i);
+            //sum-=candidates[i];
+            l.remove(l.size()-1);
+            flag[i]=false;
+        }
+    }
+
+    /**
+     * 60 时间过长
+     */
+    public String getPermutation(int n, int k) {
+        boolean[] flag = new boolean[n+1];
+        dfs3(n, k, new ArrayList<>(), flag);
+        StringBuilder res = new StringBuilder();
+        for (int i:list.get(k-1)
+             ) {
+            res.append(i);
+        }
+        return res.toString();
+    }
+
+    private void dfs3(int n, int k, List<Integer> l, boolean[] flag) {
+        if (l.size() == n) {
+            list.add(new ArrayList<>(l));
+            return;
+        }
+        if (list.size()==k)
+            return;
+        for (int i = 1; i <= n; i++) {
+            if (flag[i])
+                continue;
+            flag[i]=true;
+            l.add(i);
+            dfs3(n, k, l, flag);
+            l.remove(l.size()-1);
+            flag[i]=false;
+        }
+    }
+
+    /**
+     * 90 有重复数字的数组的子集求解
+     */
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        boolean[] flag = new boolean[nums.length];
+        Arrays.sort(nums);
+        dfs4(nums, new ArrayList<>(), flag, 0);
+        return list;
+    }
+
+    private void dfs4(int[] nums, List<Integer> l, boolean[] flag, int j) {
+        if (l.size()<=nums.length){
+            list.add(new ArrayList<>(l));
+        }
+
+        for (int i = j; i < nums.length; i++) {
+            if (flag[i]){
+                continue;
+            }
+            //去重部分
+            if (i>0&&nums[i-1]==nums[i]&&!flag[i-1]){
+                continue;
+            }
+            l.add(nums[i]);
+            flag[i]=true;
+            dfs4(nums,l,flag,i);
+            flag[i]=false;
+            l.remove(l.size()-1);
+        }
+    }
+
+    /**
+     * 207
+     */
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        for (int i = 0; i < numCourses; i++) {
+            list.add(new ArrayList<>());
+        }
+        int[] n = new int[numCourses];
+        boolean[] flag = new boolean[numCourses];
+        for (int[] i : prerequisites) {
+            list.get(i[0]).add(i[1]);
+            n[i[1]]++;
+        }
+        aidCanFinish(n, flag);
+//        for (int i:n){
+//            System.out.println(i);
+//        }
+        for (int i : n) {
+            if (i!=0)
+                return false;
+        }
+        return true;
+    }
+
+    private void aidCanFinish(int[] n, boolean[] flag) {
+        boolean change = false;
+        for (int i = 0; i < n.length; i++) {
+            if (n[i] == 0&&!flag[i]) {
+                flag[i] = true;
+                for (int j:list.get(i)){
+                    n[j]--;
+                }
+                change = true;
+            }
+        }
+        if (change) {
+            aidCanFinish(n,flag);
+        }
+    }
 }
 
 
