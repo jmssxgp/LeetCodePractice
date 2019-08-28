@@ -1651,6 +1651,36 @@ class Solution{
             aidCanFinish(n,flag);
         }
     }
+
+    /**
+     * leetcode 106
+     * @param inorder
+     * @param postorder
+     * @return
+     */
+    int[] inorder;
+    int[] postorder;
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        this.inorder = inorder;
+        this.postorder = postorder;
+        return aidBuildTree(0,inorder.length-1,0,inorder.length-1);
+    }
+    private TreeNode aidBuildTree(int ilow, int ihigh, int plow, int phigh){
+        TreeNode root = null;
+        if (ilow <= ihigh&&plow<=phigh) {
+            root = new TreeNode(postorder[phigh]);
+            for(int i=ilow; i<=ihigh;i++){
+                if(inorder[i]==postorder[phigh]){
+                    root.left = aidBuildTree(ilow, i-1, plow, plow+(i-ilow)-1);
+                    root.right = aidBuildTree(i+1, ihigh, plow+(i-ilow), phigh-1);
+                    break;
+                }
+            }
+        }
+        return root;
+    }
+
+
 }
 
 
