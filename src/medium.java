@@ -1680,6 +1680,27 @@ class Solution{
         return root;
     }
 
+    /**
+     * leetcode 215
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> pq = new PriorityQueue<>(k);
+        for (int i: nums
+        ) {
+            if (pq.size()==k&&i>=pq.peek()){
+                pq.poll();
+                pq.offer(i);
+                //System.out.println(i);
+            }else if(pq.size()<k){
+                pq.offer(i);
+
+            }
+        }
+        return pq.poll();
+    }
 
 }
 
