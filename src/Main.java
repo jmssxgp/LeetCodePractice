@@ -3,8 +3,11 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Solution solution = new Solution();
-        int[][] nums = {{0,1}};
-        System.out.println(solution.canFinish(2,nums));
+        Trie trie = new Trie();
+        trie.insert("app");
+        trie.insert("apple");
+        trie.insert("beer");
+        trie.insert("add");
+        trie.insert("apps");
     }
 }
