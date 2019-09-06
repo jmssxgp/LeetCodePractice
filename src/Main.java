@@ -8,6 +8,6 @@ public class Main {
         trie.insert("apple");
         trie.insert("beer");
         trie.insert("add");
-        trie.insert("apps");
+        trie.insert("jb");
     }
 }

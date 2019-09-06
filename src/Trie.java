@@ -14,7 +14,7 @@ public class Trie {
         TrieNode node = root;
         for (int i=0; i<word.length();i++){
             char currentChar = word.charAt(i);
-            if (!root.containsKey(currentChar)){
+            if (!node.containsKey(currentChar)){
                 node.put(currentChar, new TrieNode()); //不存在则创建新的节点
             }
             node = node.get(currentChar);     //移动到新节点或已存在的下一节点，节点所在位置已经保存了字符信息
