@@ -1,13 +1,9 @@
-import java.util.Arrays;
-import java.util.List;
+import com.test.Medium.solution;
+import com.test.contest.Contest;
 
 public class Main {
     public static void main(String[] args) {
-        Trie trie = new Trie();
-        trie.insert("app");
-        trie.insert("apple");
-        trie.insert("beer");
-        trie.insert("add");
-        trie.insert("jb");
+        solution s = new solution();
+        s.calculate("3+2*2");
     }
 }

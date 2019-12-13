@@ -1047,25 +1047,6 @@ class Solution{
     }
 
     /**
-     * @leetcode 120
-     */
-    /*
-    自底向上更新
-     */
-    public int minimumTotal(List<List<Integer>> triangle) {
-        int len = triangle.size();
-        int[] res = new int[len+1];
-        if (len==0)return 0;
-        for (int i = len - 1; i >= 0; i--) {
-            List<Integer> l = triangle.get(i);
-            for (int j = 0; j < l.size(); j++) {
-                res[j] = l.get(j) + Math.min(res[j],res[j+1]);
-            }
-        }
-        return res[0];
-    }
-
-    /**
      * @leetcode 129
      */
     int sum = 0;

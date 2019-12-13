@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -100,5 +101,71 @@ public class Easy {
         }
         return false;
     }
+
+
+    public int findMin(int[] nums) {
+        int left = 0, right = nums.length-1,mid;
+        if (nums.length==1)return nums[0];
+        if (nums[right]>nums[0])
+            return nums[0];
+        while (right>=left){
+            mid = left + (right - left)/2;
+            if (nums[mid]>nums[mid+1]){
+                return nums[mid+1];
+            }
+            if (nums[mid]<nums[mid-1])
+                return nums[mid];
+            if (nums[mid]>nums[0]){
+                left=mid+1;
+            }else {
+                right=mid-1;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 166
+     * @param numerator
+     * @param denominator
+     * @return
+     */
+    public String fractionToDecimal(int numerator, int denominator) {
+        StringBuilder sb = new StringBuilder();
+        boolean flag = false;
+        while (true){
+            if (numerator>denominator){
+                sb.append(numerator/denominator);
+            }else if (!flag){
+                sb.append('.');
+                numerator*=10;
+                sb.append(numerator/denominator);
+                flag=true;
+            }else {
+                numerator*=10;
+                sb.append(numerator/denominator);
+            }
+            if (numerator==0)break;
+            if (sb.length()==100)break;
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 279
+     * @param n
+     * @return
+     */
+    public int numSquares(int n) {
+        int[] dp = new int[n+1];
+        for (int i=1;i<=n;i++){
+            dp[i]=i;
+            for (int j=1;j<i;j++){
+                dp[i]=Math.min(dp[i],dp[i-j*j]+1);
+            }
+        }
+        return dp[n];
+    }
+
 
 }
